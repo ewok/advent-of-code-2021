@@ -2,16 +2,25 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as string]))
 
-(def output
+(def input
   (map #(Integer/parseInt %)
        (string/split-lines
         (slurp
          (io/file (io/resource "day1_input.txt"))))))
 
-(defn calculate-trend [input]
-  (map (fn [x y]
-         (if (< x y) 1 0))
-       input (rest input)))
+(defn part1 [input]
+  (reduce + (map (fn [x y]
+                   (if (< x y) 1 0))
+                 input (rest input))))
+
+; (defn part2 [input]
+;   (part1 (flatten (map #(reduce + %) (partition 3 1 input)))))
+
+(defn part2 [input]
+  (part1
+   (flatten
+    (map #(reduce + %)
+         (partition 3 1 input)))))
 
 (defn do []
-  (reduce + (calculate-trend output)))
+  (format "part1: %d; part2: %s" (part1 input) (part2 input)))

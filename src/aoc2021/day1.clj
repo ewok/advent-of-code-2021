@@ -13,9 +13,6 @@
                    (if (< x y) 1 0))
                  input (rest input))))
 
-; (defn part2 [input]
-;   (part1 (flatten (map #(reduce + %) (partition 3 1 input)))))
-
 (defn part2 [input]
   (part1
    (flatten

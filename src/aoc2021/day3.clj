@@ -7,19 +7,7 @@
    (slurp
     (io/file (io/resource "day3_input.txt")))))
 
-(def test1
-  ["00100",
-   "11110",
-   "10110",
-   "10111",
-   "10101",
-   "01111",
-   "00111",
-   "11100",
-   "10000",
-   "11001",
-   "00010",
-   "01010"])
+;; part1
 
 (defn get-size [input]
   (count (first input)))
@@ -50,5 +38,54 @@
         epsilon (Integer/parseInt (epsilon gamma (get-size input)) 2)]
     (Integer/toString (* gamma epsilon))))
 
+;; part2
+
+;; helpers
+(defn find-most-bit [input bit]
+  (get (->> input
+            (map #(Integer/parseInt (subs % bit (inc bit))))
+            frequencies
+            ((fn [x] (if (= (get x 0) (get x 1)) {1 1} x)))
+            (sort-by val)
+            reverse
+            first
+            )
+       0))
+
+(defn find-least-bit [input bit]
+  (get (->> input
+            (map #(Integer/parseInt (subs % bit (inc bit))))
+            frequencies
+            ((fn [x] (if (= (get x 0) (get x 1)) {0 0} x)))
+            (sort-by val)
+            first)
+       0))
+
+(defn filter-by-bit [input bit value]
+  (->> input
+       (filter #(= (Integer/parseInt (subs % bit (inc bit))) value))
+       flatten
+       vec))
+
+;; oxygen
+(defn oxygen [input]
+  (loop [i 0, elements input]
+      (if
+       (= 1 (count elements))
+        (first elements)
+        (recur (inc i) (filter-by-bit elements i (find-most-bit elements i))))))
+
+;; co2
+(defn co2 [input]
+  (loop [i 0, elements input]
+      (if
+       (= 1 (count elements))
+        (first elements)
+        (recur (inc i) (filter-by-bit elements i (find-least-bit elements i))))))
+
+;; main loop
+(defn part2 [input]
+  (* (Integer/parseInt (oxygen input) 2) (Integer/parseInt (co2 input) 2)))
+
 (defn do []
-  (format "part1: %s;" (part1 input)))
+  (format "part1: %s; part2: %s" (part1 input) (part2 input)))
